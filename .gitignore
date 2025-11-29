@@ -1,0 +1,37 @@
+# Terraform state and backup files
+*.tfstate
+*.tfstate.backup
+**/.terraform/*
+
+# Terraform crash logs
+crash.log
+
+# Terraform directories
+.terraform/
+
+
+# SSH keys and sensitive files
+*.pem
+*.key
+*.env
+
+# Jenkins artifacts (if any)
+jenkins-output/
+*.log
+*.tmp
+
+# IDE/editor config files
+.vscode/
+.idea/
+*.swp
+*.sublime-workspace
+*.sublime-project
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# AWS credentials (if accidentally placed here)
+.aws/
+credentials
+config
