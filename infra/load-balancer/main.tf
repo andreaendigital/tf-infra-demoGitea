@@ -62,18 +62,3 @@ resource "aws_lb_listener" "infraCar_lb_listener" {
     target_group_arn = var.lb_target_group_arn
   }
 }
-
-# The following HTTPS listener is commented out because no ACM certificate or custom domain is used
-# https listner on port 443
-# resource "aws_lb_listener" "infraCar_lb_https_listener" {
-#   load_balancer_arn = aws_lb.infraCar_lb.arn
-#   port              = var.lb_https_listner_port
-#   protocol          = var.lb_https_listner_protocol
-#   ssl_policy        = "ELBSecurityPolicy-FS-1-2-Res-2019-08"
-#   certificate_arn   = var.infraCar_acm_arn
-#
-#   default_action {
-#     type             = var.lb_listner_default_action
-#     target_group_arn = var.lb_target_group_arn
-#   }
-# }

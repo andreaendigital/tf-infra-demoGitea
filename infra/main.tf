@@ -16,6 +16,8 @@ module "security_group" {
   vpc_id                     = module.networking.infraCar_vpc_id
   public_subnet_cidr_block   = tolist(module.networking.public_subnet_cidr_block)
   ec2_sg_name_for_python_api = "SG for EC2 for enabling port 5000"
+  vpc_cidr                   = var.vpc_cidr
+  my_dev_ip                  = var.my_dev_ip
 }
 
 # Jenkins EC2 instance module: deploys Jenkins on Amazon Linux with user_data script
@@ -69,7 +71,7 @@ module "alb" {
 
 module "rds_db_instance" {
   source               = "./rds"
-  db_subnet_group_name = "infracar-rds-subnet-group"
+  db_subnet_group_name = "infracar-rds-subnet-group-v2"
   subnet_groups        = tolist(module.networking.infraCar_public_subnets)
   rds_mysql_sg_id      = module.security_group.rds_mysql_sg_id
   mysql_db_identifier  = "mydb"

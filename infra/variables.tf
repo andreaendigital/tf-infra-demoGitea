@@ -49,3 +49,15 @@ variable "public_key" {
   type        = string
   description = "Public SSH key to associate with the EC2 instance"
 }
+
+# Security Groups
+
+variable "my_dev_ip" {
+  type        = string
+  description = "CIDR block for the developer's IP to allow SSH access (e.g., 203.0.113.4/32)"
+}
+
+variable "ec2_sg_name_for_python_api" {
+  type        = string
+  description = "Name tag for the EC2 Security Group hosting the Python API."
+}
