@@ -6,13 +6,13 @@ variable "vpc_id" {}
 variable "ec2_instance_id" {}
 
 # Outputs
-output "infraCar_lb_target_group_arn" {
+output "infraGitea_lb_target_group_arn" {
   description = "ARN of the Load Balancer target group"
-  value       = aws_lb_target_group.infraCar_lb_target_group.arn
+  value       = aws_lb_target_group.infraGitea_lb_target_group.arn
 }
 
 # Target Group Resource
-resource "aws_lb_target_group" "infraCar_lb_target_group" {
+resource "aws_lb_target_group" "infraGitea_lb_target_group" {
   name     = var.lb_target_group_name
   port     = var.lb_target_group_port
   protocol = var.lb_target_group_protocol
@@ -30,8 +30,8 @@ resource "aws_lb_target_group" "infraCar_lb_target_group" {
 }
 
 # Target Group Attachment
-resource "aws_lb_target_group_attachment" "infraCar_lb_target_group_attachment" {
-  target_group_arn = aws_lb_target_group.infraCar_lb_target_group.arn
+resource "aws_lb_target_group_attachment" "infraGitea_lb_target_group_attachment" {
+  target_group_arn = aws_lb_target_group.infraGitea_lb_target_group.arn
   target_id        = var.ec2_instance_id
   port             = 5000  # Port exposed by the Flask API
 }

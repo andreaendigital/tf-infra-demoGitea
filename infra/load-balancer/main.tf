@@ -14,22 +14,22 @@ variable "lb_target_group_attachment_port" {}
 # The following variables are not used because HTTPS and ACM are not configured
 #variable "lb_https_listner_port" {}
 #variable "lb_https_listner_protocol" {}
-#variable "infraCar_acm_arn" {}
+#variable "infraGitea_acm_arn" {}
 
 # Outputs
 
 output "aws_lb_dns_name" {
   description = "DNS name of the Load Balancer"
-  value       = aws_lb.infraCar_lb.dns_name
+  value       = aws_lb.infraGitea_lb.dns_name
 }
 
 output "aws_lb_zone_id" {
   description = "Zone ID of the Load Balancer"
-  value       = aws_lb.infraCar_lb.zone_id
+  value       = aws_lb.infraGitea_lb.zone_id
 }
 
 # Load Balancer Resource
-resource "aws_lb" "infraCar_lb" {
+resource "aws_lb" "infraGitea_lb" {
   name               = var.lb_name
   internal           = var.is_external
   load_balancer_type = var.lb_type
@@ -40,20 +40,20 @@ resource "aws_lb" "infraCar_lb" {
 
   tags = {
     Name        = var.tag_name
-    Project     = "infraCar"
+    Project     = "infraGitea"
   }
 }
 
 # Target Group Attachment
-resource "aws_lb_target_group_attachment" "infraCar_lb_target_group_attachment" {
+resource "aws_lb_target_group_attachment" "infraGitea_lb_target_group_attachment" {
   target_group_arn = var.lb_target_group_arn
   target_id        = var.ec2_instance_id
   port             = var.lb_target_group_attachment_port
 }
 
 # HTTP Listener (Port 80)
-resource "aws_lb_listener" "infraCar_lb_listener" {
-  load_balancer_arn = aws_lb.infraCar_lb.arn
+resource "aws_lb_listener" "infraGitea_lb_listener" {
+  load_balancer_arn = aws_lb.infraGitea_lb.arn
   port              = var.lb_listner_port
   protocol          = var.lb_listner_protocol
 
