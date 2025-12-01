@@ -74,13 +74,13 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
 
   tags = {
     Name        = "Security Groups to allow SSH(22) and HTTP(80) and https(443)"
-    Project     = "infraCar"
+    Project     = "infraGitea"
   }
 }
 
 # --- Bloque 2: Security Group for RDS ---
 resource "aws_security_group" "rds_mysql_sg" {
-  name        = "infraCar-rds-sg"
+  name        = "infraGitea-rds-sg"
   description = "Allow access to RDS from EC2 present in public subnet"
   vpc_id      = var.vpc_id
 
@@ -106,8 +106,8 @@ resource "aws_security_group" "rds_mysql_sg" {
   }
 
   tags = {
-    Name        = "infraCar-rds-sg"
-    Project     = "infraCar"
+    Name        = "infraGitea-rds-sg"
+    Project     = "infraGitea"
   }
 }
 
@@ -168,6 +168,6 @@ resource "aws_security_group" "ec2_sg_python_api" {
 
   tags = {
     Name        = var.ec2_sg_name_for_python_api
-    Project     = "infraCar"
+    Project     = "infraGitea"
   }
 }

@@ -199,7 +199,7 @@ curl http://<EC2_PUBLIC_IP>:5002/metrics/json  # Metrics
 terraform show
 
 # List AWS resources
-aws ec2 describe-instances --filters "Name=tag:Project,Values=infraCar"
+aws ec2 describe-instances --filters "Name=tag:Project,Values=infraGitea"
 
 # Verify monitoring configuration
 terraform output splunk_config
