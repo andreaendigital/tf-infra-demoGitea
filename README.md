@@ -1,6 +1,6 @@
-# Car Price Prediction Infrastructure
+# Gitea Infrastructure
 
-A complete DevOps solution for deploying a Flask-based car price prediction application on AWS using Infrastructure as Code (IaC) and automated CI/CD pipelines.
+A complete DevOps solution for deploying Gitea (self-hosted Git service) on AWS using Infrastructure as Code (IaC) and automated CI/CD pipelines.
 
 ## 🏗️ Architecture Overview
 
@@ -33,14 +33,14 @@ This project implements a modern DevOps architecture with:
 
 ### AWS Resources
 
-| Component | Description | Configuration |
-|-----------|-------------|---------------|
-| **VPC** | Virtual Private Cloud | 10.0.0.0/16 CIDR |
-| **Subnets** | Public/Private subnets | Multi-AZ (us-east-1a, us-east-1b) |
-| **EC2** | Application server | t3.small (Free Tier compatible) |
-| **RDS** | MySQL database | db.t3.micro with automated backups |
-| **ALB** | Application Load Balancer | HTTP/HTTPS traffic distribution |
-| **Security Groups** | Network security | SSH, HTTP, HTTPS, and application ports |
+| Component           | Description               | Configuration                           |
+| ------------------- | ------------------------- | --------------------------------------- |
+| **VPC**             | Virtual Private Cloud     | 10.0.0.0/16 CIDR                        |
+| **Subnets**         | Public/Private subnets    | Multi-AZ (us-east-1a, us-east-1b)       |
+| **EC2**             | Application server        | t3.small (Free Tier compatible)         |
+| **RDS**             | MySQL database            | db.t3.micro with automated backups      |
+| **ALB**             | Application Load Balancer | HTTP/HTTPS traffic distribution         |
+| **Security Groups** | Network security          | SSH, HTTP, HTTPS, and application ports |
 
 ### Terraform Modules
 
@@ -62,15 +62,17 @@ infra/
 ### 1. Jenkins Configuration
 
 #### Required Credentials
+
 Configure these credentials in Jenkins:
 
-| Credential ID | Type | Description |
-|---------------|------|-------------|
+| Credential ID          | Type            | Description                           |
+| ---------------------- | --------------- | ------------------------------------- |
 | `aws-jenkins-carprice` | AWS Credentials | AWS access keys for Terraform/Ansible |
-| `ansible-ssh-key` | SSH Private Key | EC2 instance access key |
-| `github-andrea-token` | Secret Text | GitHub access token |
+| `ansible-ssh-key`      | SSH Private Key | EC2 instance access key               |
+| `github-andrea-token`  | Secret Text     | GitHub access token                   |
 
 #### Required Plugins
+
 - AWS Credentials Plugin
 - SSH Agent Plugin
 - Git Plugin
@@ -79,6 +81,7 @@ Configure these credentials in Jenkins:
 ### 2. AWS Prerequisites
 
 1. **S3 Bucket**: Create bucket for Terraform remote state
+
    ```bash
    aws s3 mb s3://infracar-terraform-state
    ```
@@ -93,11 +96,12 @@ Configure these credentials in Jenkins:
 ### 3. Repository Setup
 
 Clone the required repositories:
+
 ```bash
 # Infrastructure repository
 git clone https://github.com/andreaendigital/tf-infra-demoCar
 
-# Configuration management repository  
+# Configuration management repository
 git clone https://github.com/andreaendigital/configManagement-carPrice
 ```
 
@@ -105,11 +109,11 @@ git clone https://github.com/andreaendigital/configManagement-carPrice
 
 ### Jenkins Pipeline Parameters
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `PLAN_TERRAFORM` | `true` | Run terraform plan to preview changes |
-| `APPLY_TERRAFORM` | `true` | Apply infrastructure changes |
-| `DEPLOY_ANSIBLE` | `true` | Deploy Flask application with Ansible |
+| Parameter           | Default | Description                               |
+| ------------------- | ------- | ----------------------------------------- |
+| `PLAN_TERRAFORM`    | `true`  | Run terraform plan to preview changes     |
+| `APPLY_TERRAFORM`   | `true`  | Apply infrastructure changes              |
+| `DEPLOY_ANSIBLE`    | `true`  | Deploy Flask application with Ansible     |
 | `DESTROY_TERRAFORM` | `false` | Destroy infrastructure (use with caution) |
 
 ### Pipeline Stages
@@ -148,12 +152,14 @@ ansible-playbook -i inventory.ini playbook.yml
 ### Observability & Monitoring
 
 **Splunk Observability Cloud Integration:**
+
 - **Infrastructure Metrics**: EC2 CPU, memory, disk, network monitoring
 - **Application Metrics**: Flask app performance metrics (ports 3000, 5002)
 - **Pipeline Metrics**: Jenkins deployment success/failure tracking
 - **Real-time Dashboards**: https://app.us1.signalfx.com
 
 **Monitoring Variables:**
+
 ```hcl
 # Terraform Variables (infra/monitoring.tf)
 variable "splunk_observability_token" {
@@ -171,6 +177,7 @@ variable "splunk_realm" {
 ```
 
 **Ansible Monitoring Role:**
+
 ```yaml
 # configManagement-carPrice/roles/splunk_monitoring/vars/main.yml
 splunk_token: "PZuf3J0L2Op_Qj9hpAJzlw"
@@ -178,6 +185,7 @@ splunk_realm: "us1"
 ```
 
 ### Application Health Check
+
 ```bash
 # Check service status
 systemctl status carprice
@@ -194,6 +202,7 @@ curl http://<EC2_PUBLIC_IP>:5002/metrics/json  # Metrics
 ```
 
 ### Infrastructure Verification
+
 ```bash
 # Check Terraform state
 terraform show
@@ -233,14 +242,15 @@ tf-infra-demoCar/
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| Terraform state lock | `terraform force-unlock <LOCK_ID>` |
-| Ansible connection failed | Verify SSH key and security groups |
-| Service startup failed | Check systemd service configuration |
-| AWS credentials error | Verify IAM permissions and credential configuration |
+| Issue                     | Solution                                            |
+| ------------------------- | --------------------------------------------------- |
+| Terraform state lock      | `terraform force-unlock <LOCK_ID>`                  |
+| Ansible connection failed | Verify SSH key and security groups                  |
+| Service startup failed    | Check systemd service configuration                 |
+| AWS credentials error     | Verify IAM permissions and credential configuration |
 
 ### Logs Location
+
 - **Jenkins**: Jenkins console output
 - **Terraform**: Local `.terraform/` directory
 - **Ansible**: Ansible playbook output
@@ -263,6 +273,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For issues and questions:
+
 - Create an issue in the GitHub repository
 - Review the troubleshooting section
 - Check Jenkins console logs for detailed error information
