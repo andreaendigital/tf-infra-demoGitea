@@ -60,7 +60,7 @@ module "alb" {
   tag_name                  = "infraGitea-alb"
   lb_target_group_arn       = module.lb_target_group.infraGitea_lb_target_group_arn
   ec2_instance_id           = module.ec2.infraGitea_ec2_instance_id
-  lb_listner_port           = 5000
+  lb_listner_port           = 80
   lb_listner_protocol       = "HTTP"
   lb_listner_default_action = "forward"
   #lb_https_listner_port     = 443
