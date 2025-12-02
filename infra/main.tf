@@ -99,3 +99,29 @@ module "aws_ceritification_manager" {
 
 # HTTPS listener variables are commented out because demoCar_1 does not use Route 53 or SSL certificates.
 # To enable HTTPS in the future, uncomment these lines and define the corresponding variables in the module.
+output "infraGitea_rds_endpoint" {
+  description = "RDS MySQL endpoint for infraGitea database"
+  value       = module.rds_db_instance.infraGitea_rds_endpoint
+}
+
+output "infraGitea_rds_address" {
+  description = "RDS MySQL address for infraGitea database"
+  value       = module.rds_db_instance.infraGitea_rds_address
+}
+
+output "infraGitea_mysql_username" {
+  description = "MySQL username for infraGitea"
+  value       = "dbuser"
+  sensitive   = true
+}
+
+output "infraGitea_mysql_password" {
+  description = "MySQL password for infraGitea"
+  value       = "dbpassword"
+  sensitive   = true
+}
+
+output "infraGitea_mysql_dbname" {
+  description = "MySQL database name for infraGitea"
+  value       = "infraGiteaDB"
+}
