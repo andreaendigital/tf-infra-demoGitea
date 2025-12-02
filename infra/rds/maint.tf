@@ -42,3 +42,23 @@ resource "aws_db_instance" "default" {
   }
 
 }
+# Outputs
+output "infraGitea_rds_endpoint" {
+  description = "RDS MySQL endpoint for infraGitea"
+  value       = aws_db_instance.default.endpoint
+}
+
+output "infraGitea_rds_address" {
+  description = "RDS MySQL address (without port) for infraGitea"
+  value       = aws_db_instance.default.address
+}
+
+output "infraGitea_rds_port" {
+  description = "RDS MySQL port for infraGitea"
+  value       = aws_db_instance.default.port
+}
+
+output "infraGitea_rds_db_name" {
+  description = "RDS database name for infraGitea"
+  value       = aws_db_instance.default.db_name
+}
