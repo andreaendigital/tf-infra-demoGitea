@@ -27,6 +27,10 @@ resource "aws_lb_target_group" "infraGitea_lb_target_group" {
     interval = 5
     matcher = "200"  # has to be HTTP 200 or fails
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Target Group Attachment
