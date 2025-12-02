@@ -43,9 +43,8 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-carprice']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-gitea']]) {
                     dir('infra') {
-                        sh 'export AWS_PROFILE=""'
                         sh 'terraform init'
                     }
                 }
@@ -57,7 +56,7 @@ pipeline {
                 expression { return params.PLAN_TERRAFORM }
             }
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-carprice']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-gitea']]) {
                     dir('infra') { // .tf files must be here
                         sh 'terraform plan -out=tfplan'
                     }
@@ -70,7 +69,7 @@ pipeline {
                 expression { return params.APPLY_TERRAFORM }
             }
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-carprice']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-gitea']]) {
                     dir('infra') {
                         sh 'terraform apply -auto-approve tfplan'
                     }
@@ -83,7 +82,7 @@ pipeline {
                 expression { return params.DESTROY_TERRAFORM }
             }
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-carprice']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-gitea']]) {
                     dir('infra') {
                         sh 'terraform destroy -auto-approve'
                     }
@@ -98,7 +97,7 @@ pipeline {
                 expression { return params.DEPLOY_ANSIBLE }
             }
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-carprice']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-gitea']]) {
                 sh "chmod +x ${INVENTORY_SCRIPT}"
                 sh "${INVENTORY_SCRIPT}"
                 }
