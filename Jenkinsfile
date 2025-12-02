@@ -10,7 +10,7 @@ pipeline {
     }
 
   environment {
-    ANSIBLE_DIR       = 'configManagement-carPrice'
+    ANSIBLE_DIR       = 'ansible-gitea'
     INVENTORY_SCRIPT  = "${ANSIBLE_DIR}/generate_inventory.sh"
     INVENTORY_FILE    = "${ANSIBLE_DIR}/inventory.ini"
     PLAYBOOK_FILE     = "${ANSIBLE_DIR}/playbook.yml"
