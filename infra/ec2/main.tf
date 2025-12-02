@@ -54,6 +54,6 @@ resource "aws_instance" "infraGitea_ec2" {
 }
 
 resource "aws_key_pair" "infraGitea_key" {
-  key_name   = "aws_key"
+  key_name   = "infraGitea_key"
   public_key = var.public_key
 }
