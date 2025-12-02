@@ -33,5 +33,5 @@ resource "aws_lb_target_group" "infraGitea_lb_target_group" {
 resource "aws_lb_target_group_attachment" "infraGitea_lb_target_group_attachment" {
   target_group_arn = aws_lb_target_group.infraGitea_lb_target_group.arn
   target_id        = var.ec2_instance_id
-  port             = 5000  # Port exposed by the Flask API
+  port             = 3000  # Port exposed by Gitea
 }
