@@ -43,7 +43,7 @@ output "ec2_public_ip" {
 module "lb_target_group" {
   source                   = "./load-balancer-target-group"
   lb_target_group_name     = "infraGitea-lb-target-group"
-  lb_target_group_port     = 5000
+  lb_target_group_port     = 3000
   lb_target_group_protocol = "HTTP"
   vpc_id                   = module.networking.infraGitea_vpc_id
   ec2_instance_id          = module.ec2.infraGitea_ec2_instance_id
