@@ -31,17 +31,15 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
   description = "Enable the Port 22(SSH) & Port 80(http) and https(443)"
   vpc_id      = var.vpc_id
 
-  # ssh for terraform remote exec
-  # Restringe SSH a una IP o CIDR conocido (var.my_dev_ip)
+  # ssh for terraform remote exec and Ansible
+  # Allow SSH from anywhere for Jenkins/Ansible access
   ingress {
-    description = "Allow remote SSH only from defined CIDR (e.g., VPN/Office IP)"
-    cidr_blocks = [var.my_dev_ip] 
+    description = "Allow remote SSH from anywhere"
+    cidr_blocks = ["0.0.0.0/0"]
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-  }
-
-  # enable http
+  }  # enable http
   #  Si está detrás de un Load Balancer, se recomienda usar el SG del LB.
   # Aquí mantenemos 0.0.0.0/0 asumiendo que es público, pero si es un backend, debe ser el SG del LB.
   ingress {
