@@ -1,0 +1,56 @@
+# S3 bucket for remote state, created manually
+bucket_name = "infraGitea-remote-state-bucket"
+name        = "infraGitea"
+
+# VPC configuration (Free Tier compatible CIDR blocks)
+vpc_cidr = "10.0.0.0/16"
+vpc_name = "infraGitea-eu-central-vpc"
+
+# Public subnets (for ALB and Jenkins EC2)
+cidr_public_subnet = ["10.0.1.0/24", "10.0.2.0/24"]
+
+# Private subnets (for RDS or backend services)
+cidr_private_subnet = ["10.0.3.0/24", "10.0.4.0/24"]
+db_subnet_group_name = "infragitea-rds-subnet-group"
+
+# Availability Zones in us-east-1 (Free Tier region)
+eu_availability_zone = ["us-east-1a", "us-east-1b"]
+
+# EC2 configuration
+public_key = "ssh-rsa YOUR_SSH_PUBLIC_KEY_HERE"
+ec2_ami_id = "ami-0157af9aea2eef346" # Amazon Linux 2023 AMI (Free Tier eligible)
+ec2_sg_name_for_python_api = "infraGitea-python-api-sg"
+
+# Security variable
+my_dev_ip = "203.0.113.4/32"  # Change to your actual IP (e.g., 1.2.3.4/32)
+
+# ====================================
+# VPN Gateway Configuration (Optional)
+# ====================================
+# Uncomment these variables to enable VPN connection to Azure
+# Get azure_vpn_gateway_ip from Azure Terraform output after deploying TF-AZ-INFRA-DEMOGITEA
+
+# enable_vpn_gateway    = true
+# azure_vpn_gateway_ip  = "20.123.45.67"  # Replace with Azure VPN Gateway public IP
+# azure_vnet_cidr       = "10.1.0.0/16"   # Azure VNet CIDR block
+# vpn_shared_key        = "your-secure-shared-key-here"  # Must match Azure configuration
+
+# ====================================
+# MySQL Replication Configuration (Optional)
+# ====================================
+# Uncomment these variables to enable binlog and replication to Azure
+# WARNING: Enabling binlog changes backup_retention_period from 0 to 7 days
+# This will increase RDS costs slightly
+
+# enable_binlog          = true
+# replication_user       = "repl_azure"
+# replication_password   = "SecurePassword123!"  # Change to a strong password
+
+# After enabling binlog and deploying:
+# 1. Connect to RDS MySQL and run:
+#    CREATE USER 'repl_azure'@'%' IDENTIFIED BY 'SecurePassword123!';
+#    GRANT REPLICATION SLAVE ON *.* TO 'repl_azure'@'%';
+#    FLUSH PRIVILEGES;
+#    SHOW MASTER STATUS;
+# 2. Note the File and Position values from SHOW MASTER STATUS
+# 3. Use these values in Azure MySQL replication configuration

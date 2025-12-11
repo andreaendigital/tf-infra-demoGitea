@@ -5,6 +5,11 @@ variable "mysql_db_identifier" {}
 variable "mysql_username" {}
 variable "mysql_password" {}
 variable "mysql_dbname" {}
+variable "enable_binlog" {
+  description = "Enable binary logging for replication"
+  type        = bool
+  default     = false
+}
 
 # RDS Subnet Group
 resource "aws_db_subnet_group" "infraGitea_db_subnet_group" {
@@ -16,6 +21,29 @@ resource "aws_db_subnet_group" "infraGitea_db_subnet_group" {
     Project     = "infraGitea"
   }
 
+}
+
+# Parameter Group for Binlog Support (Replication)
+resource "aws_db_parameter_group" "replication" {
+  count       = var.enable_binlog ? 1 : 0
+  name        = "${var.mysql_db_identifier}-binlog-params"
+  family      = "mysql8.0"
+  description = "Parameter group for MySQL replication with binlog enabled"
+
+  parameter {
+    name  = "binlog_format"
+    value = "ROW"
+  }
+
+  parameter {
+    name  = "binlog_expire_logs_seconds"
+    value = "86400" # 24 hours
+  }
+
+  tags = {
+    Name    = "${var.mysql_db_identifier}-binlog-params"
+    Project = "infraGitea"
+  }
 }
 
 # RDS MySQL Instance Resource
@@ -33,7 +61,8 @@ resource "aws_db_instance" "default" {
   db_name                 = var.mysql_dbname
   skip_final_snapshot     = true
   apply_immediately       = true
-  backup_retention_period = 0
+  backup_retention_period = var.enable_binlog ? 7 : 0  # Binlog requires backup retention >= 1
+  parameter_group_name    = var.enable_binlog ? aws_db_parameter_group.replication[0].name : null
   deletion_protection     = false
 
     tags = {
