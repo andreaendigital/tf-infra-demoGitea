@@ -78,6 +78,17 @@ module "rds_db_instance" {
   mysql_username       = "dbuser"  
   mysql_password       = "dbpassword" # Change, use secret manager
   mysql_dbname         = "infraGiteaDB" # Change, use secret manager
+  enable_binlog        = var.enable_binlog
+}
+
+# VPN Gateway module for Azure connection
+module "vpn_gateway" {
+  source                = "./vpn-gateway"
+  vpc_id                = module.networking.infraGitea_vpc_id
+  enable_vpn_gateway    = var.enable_vpn_gateway
+  azure_vpn_gateway_ip  = var.azure_vpn_gateway_ip
+  azure_vnet_cidr       = var.azure_vnet_cidr
+  vpn_shared_key        = var.vpn_shared_key
 }
 
 

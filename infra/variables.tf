@@ -61,3 +61,55 @@ variable "ec2_sg_name_for_python_api" {
   type        = string
   description = "Name tag for the EC2 Security Group hosting the Python API."
 }
+
+# ====================================
+# VPN Gateway Variables (Azure Connection)
+# ====================================
+
+variable "enable_vpn_gateway" {
+  description = "Enable VPN Gateway for connection to Azure"
+  type        = bool
+  default     = false
+}
+
+variable "azure_vpn_gateway_ip" {
+  description = "Public IP address of Azure VPN Gateway (from Azure Terraform output)"
+  type        = string
+  default     = ""
+}
+
+variable "azure_vnet_cidr" {
+  description = "Azure VNet CIDR block (e.g., 10.1.0.0/16)"
+  type        = string
+  default     = "10.1.0.0/16"
+}
+
+variable "vpn_shared_key" {
+  description = "Shared key for VPN connection (must match Azure configuration)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+# ====================================
+# RDS Replication Variables
+# ====================================
+
+variable "enable_binlog" {
+  description = "Enable binary logging for RDS replication to Azure"
+  type        = bool
+  default     = false
+}
+
+variable "replication_user" {
+  description = "MySQL user for replication to Azure"
+  type        = string
+  default     = "repl_azure"
+}
+
+variable "replication_password" {
+  description = "Password for replication user"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
