@@ -154,7 +154,7 @@ ansible-playbook -i inventory.ini playbook.yml
 **Splunk Observability Cloud Integration:**
 
 - **Infrastructure Metrics**: EC2 CPU, memory, disk, network monitoring
-- **Application Metrics**: Flask app performance metrics (ports 3000, 5002)
+- **Application Metrics**: Gitea app performance metrics (port 3000)
 - **Pipeline Metrics**: Jenkins deployment success/failure tracking
 - **Real-time Dashboards**: https://app.us1.signalfx.com
 
@@ -163,18 +163,38 @@ ansible-playbook -i inventory.ini playbook.yml
 ```hcl
 # Terraform Variables (infra/monitoring.tf)
 variable "splunk_observability_token" {
-  description = "Splunk Observability Cloud token"
+  description = "Splunk Observability Cloud token for authentication"
   type        = string
-  default     = "PZuf3J0L2Op_Qj9hpAJzlw"
   sensitive   = true
 }
 
 variable "splunk_realm" {
-  description = "Splunk realm"
+  description = "Splunk realm (us0, us1, eu0, etc.)"
   type        = string
   default     = "us1"
 }
+
+variable "app_port" {
+  description = "Application port to monitor (Gitea frontend)"
+  type        = number
+  default     = 3000
+}
+
+variable "app_name" {
+  description = "Application name for monitoring"
+  type        = string
+  default     = "gitea"
+}
 ```
+
+**Monitored Metrics:**
+
+| Variable | Purpose | Example |
+| -------- | ------- | ------- |
+| `splunk_observability_token` | Authentication to Splunk Observability Cloud | PZuf3J0L2Op_Qj9hpAJzlw |
+| `splunk_realm` | Splunk endpoint region | us1 |
+| `app_port` | Gitea application port for metrics collection | 3000 |
+| `app_name` | Application identifier for metric labels | gitea |
 
 **Ansible Monitoring Role:**
 
@@ -182,23 +202,23 @@ variable "splunk_realm" {
 # configManagement-carPrice/roles/splunk_monitoring/vars/main.yml
 splunk_token: "PZuf3J0L2Op_Qj9hpAJzlw"
 splunk_realm: "us1"
+app_port: 3000
+app_name: "gitea"
 ```
 
 ### Application Health Check
 
 ```bash
 # Check service status
-systemctl status carprice
+systemctl status gitea
 systemctl status splunk-otel-collector
 
 # View application logs
-journalctl -u carprice -f
+journalctl -u gitea -f
 journalctl -u splunk-otel-collector -f
 
 # Test application endpoints
-curl http://<EC2_PUBLIC_IP>:3000/health  # Frontend
-curl http://<EC2_PUBLIC_IP>:5002/health  # Backend
-curl http://<EC2_PUBLIC_IP>:5002/metrics/json  # Metrics
+curl http://<EC2_PUBLIC_IP>:3000/health  # Gitea health check
 ```
 
 ### Infrastructure Verification
@@ -254,7 +274,7 @@ tf-infra-demoCar/
 - **Jenkins**: Jenkins console output
 - **Terraform**: Local `.terraform/` directory
 - **Ansible**: Ansible playbook output
-- **Application**: `/var/log/syslog` and `journalctl -u carprice`
+- **Application**: `/var/log/syslog` and `journalctl -u gitea`
 - **Monitoring**: `journalctl -u splunk-otel-collector`
 - **Splunk Dashboards**: https://app.us1.signalfx.com
 

@@ -38,3 +38,11 @@ vpn_shared_key        = "GitDemoSecureKey2025!"  # Must match Azure configuratio
 enable_binlog         = true   # Enable binary logging for replication to Azure
 replication_user      = "repl_azure"
 replication_password  = "AzureRepl2025Secure!"  # Change in production
+
+# ====================================
+# Splunk Observability Cloud
+# ====================================
+splunk_observability_token = "PZuf3J0L2Op_Qj9hpAJzlw"
+splunk_realm               = "us1"
+app_port                   = 3000
+app_name                   = "gitea"
