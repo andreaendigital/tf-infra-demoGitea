@@ -35,10 +35,8 @@ resource "aws_db_parameter_group" "replication" {
     value = "ROW"
   }
 
-  parameter {
-    name  = "binlog_expire_logs_seconds"
-    value = "86400" # 24 hours
-  }
+  # Note: binlog_expire_logs_seconds is not modifiable in RDS
+  # RDS manages binlog retention automatically based on backup_retention_period
 
   tags = {
     Name    = "${var.mysql_db_identifier}-binlog-params"
