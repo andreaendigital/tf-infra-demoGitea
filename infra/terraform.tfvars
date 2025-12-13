@@ -23,3 +23,18 @@ ec2_sg_name_for_python_api = "infraGitea-python-api-sg"
 
 # Security variable
 my_dev_ip = "203.0.113.4/32"
+
+# ====================================
+# VPN Gateway Configuration (Azure Connection)
+# ====================================
+enable_vpn_gateway    = false  # Set to true after getting Azure VPN Gateway IP
+azure_vpn_gateway_ip  = ""     # Will be filled with Azure VPN Gateway public IP from TF-AZ-INFRA output
+azure_vnet_cidr       = "10.1.0.0/16"
+vpn_shared_key        = "GitDemoSecureKey2025!"  # Must match Azure configuration
+
+# ====================================
+# RDS Replication Configuration
+# ====================================
+enable_binlog         = true   # Enable binary logging for replication to Azure
+replication_user      = "repl_azure"
+replication_password  = "AzureRepl2025Secure!"  # Change in production
