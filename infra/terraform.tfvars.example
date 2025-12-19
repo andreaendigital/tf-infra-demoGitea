@@ -38,19 +38,24 @@ my_dev_ip = "203.0.113.4/32"  # Change to your actual IP (e.g., 1.2.3.4/32)
 # ====================================
 # MySQL Replication Configuration (Optional)
 # ====================================
-# Uncomment these variables to enable binlog and replication to Azure
-# WARNING: Enabling binlog changes backup_retention_period from 0 to 7 days
-# This will increase RDS costs slightly
+# Uncomment to enable binary logging for MySQL replication to Azure
+# WARNING: Enabling binlog changes backup_retention_period from 0 to 1 day (Free Tier compatible)
 
-# enable_binlog          = true
-# replication_user       = "repl_azure"
-# replication_password   = "SecurePassword123!"  # Change to a strong password
+# enable_binlog = true
 
-# After enabling binlog and deploying:
-# 1. Connect to RDS MySQL and run:
+# Note: Replication credentials should be configured manually in RDS:
+# 1. Connect to RDS MySQL and create replication user:
 #    CREATE USER 'repl_azure'@'%' IDENTIFIED BY 'SecurePassword123!';
-#    GRANT REPLICATION SLAVE ON *.* TO 'repl_azure'@'%';
+#    GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'repl_azure'@'%';
 #    FLUSH PRIVILEGES;
 #    SHOW MASTER STATUS;
-# 2. Note the File and Position values from SHOW MASTER STATUS
-# 3. Use these values in Azure MySQL replication configuration
+# 
+# 2. Store credentials in Jenkins for automated replication setup:
+#    - Jenkins Credential ID: 'aws-rds-endpoint' → Your RDS endpoint
+#    - Jenkins Credential ID: 'aws-replication-user' → 'repl_azure'
+#    - Jenkins Credential ID: 'aws-replication-password' → Your password
+#
+# 3. Azure pipeline (replica-only mode) will automatically:
+#    - Query current binlog position from AWS RDS
+#    - Configure CHANGE MASTER on Azure MySQL
+#    - Start and verify replication
