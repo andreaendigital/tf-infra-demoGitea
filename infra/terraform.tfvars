@@ -36,8 +36,9 @@ vpn_shared_key        = "GitDemoSecureKey2025!"  # Must match Azure configuratio
 # RDS Replication Configuration
 # ====================================
 enable_binlog         = true   # Enable binary logging for replication to Azure
-replication_user      = "repl_azure"
-replication_password  = "AzureRepl2025Secure!"  # Change in production
+# Note: replication_user and replication_password are configured in AWS RDS
+# User: repl_azure with REPLICATION SLAVE privileges
+# Password is stored in Jenkins credentials as 'aws-replication-password'
 
 # ====================================
 # Splunk Observability Cloud
