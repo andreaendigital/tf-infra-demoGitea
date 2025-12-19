@@ -59,7 +59,7 @@ resource "aws_db_instance" "default" {
   db_name                 = var.mysql_dbname
   skip_final_snapshot     = true
   apply_immediately       = true
-  backup_retention_period = var.enable_binlog ? 7 : 0  # Binlog requires backup retention >= 1
+  backup_retention_period = var.enable_binlog ? 1 : 0  # Free tier supports max 1 day retention
   parameter_group_name    = var.enable_binlog ? aws_db_parameter_group.replication[0].name : null
   deletion_protection     = false
 
