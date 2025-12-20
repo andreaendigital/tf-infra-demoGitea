@@ -4,6 +4,16 @@ variable "vpc_name" {}
 variable "cidr_public_subnet" {}
 variable "eu_availability_zone" {}
 variable "cidr_private_subnet" {}
+variable "enable_vpn_gateway" {
+  description = "Enable VPN Gateway route propagation"
+  type        = bool
+  default     = false
+}
+variable "vpn_gateway_id" {
+  description = "VPN Gateway ID for route propagation (pass null if not using VPN)"
+  type        = string
+  default     = null
+}
 
 # Outputs
 
@@ -86,7 +96,13 @@ resource "aws_route_table" "infraGitea_public_rt" {
     Name        = "infraGitea-public-rt"
     Project     = "infraGitea"
   }
+}
 
+# Enable VPN Gateway route propagation on public route table
+resource "aws_vpn_gateway_route_propagation" "public_rt" {
+  count          = var.enable_vpn_gateway && var.vpn_gateway_id != null ? 1 : 0
+  vpn_gateway_id = var.vpn_gateway_id
+  route_table_id = aws_route_table.infraGitea_public_rt.id
 }
 
 # Public Route Table and Public Subnet Association
@@ -104,6 +120,13 @@ resource "aws_route_table" "infraGitea_private_rt" {
     Name        = "infraGitea-private-rt"
     Project     = "infraGitea"
   }
+}
+
+# Enable VPN Gateway route propagation on private route table
+resource "aws_vpn_gateway_route_propagation" "private_rt" {
+  count          = var.enable_vpn_gateway && var.vpn_gateway_id != null ? 1 : 0
+  vpn_gateway_id = var.vpn_gateway_id
+  route_table_id = aws_route_table.infraGitea_private_rt.id
 }
 
 
