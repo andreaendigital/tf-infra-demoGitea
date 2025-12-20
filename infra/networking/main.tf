@@ -122,11 +122,13 @@ resource "aws_route_table" "infraGitea_private_rt" {
   }
 }
 
-# Enable VPN Gateway route propagation on private route table
+# Enable VPN Gateway route propagation on private route table (for RDS connectivity to Azure)
 resource "aws_vpn_gateway_route_propagation" "private_rt" {
   count          = var.enable_vpn_gateway && var.vpn_gateway_id != null ? 1 : 0
   vpn_gateway_id = var.vpn_gateway_id
   route_table_id = aws_route_table.infraGitea_private_rt.id
+  
+  depends_on = [aws_route_table.infraGitea_private_rt]
 }
 
 
