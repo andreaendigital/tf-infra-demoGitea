@@ -30,7 +30,7 @@ my_dev_ip = "203.0.113.4/32"
 enable_vpn_gateway    = true
 azure_vpn_gateway_ip  = "172.191.103.7"  # Azure VPN Gateway public IP
 azure_vnet_cidr       = "10.1.0.0/16"
-vpn_shared_key        = "GitDemoSecureKey2025!"  # Must match Azure configuration
+vpn_shared_key        = "GitDemoSecureKey2025"  # Must match Azure configuration
 
 # ====================================
 # RDS Replication Configuration
