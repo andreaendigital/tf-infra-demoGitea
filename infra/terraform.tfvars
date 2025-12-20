@@ -27,8 +27,8 @@ my_dev_ip = "203.0.113.4/32"
 # ====================================
 # VPN Gateway Configuration (Azure Connection)
 # ====================================
-enable_vpn_gateway    = false  # Set to true after getting Azure VPN Gateway IP
-azure_vpn_gateway_ip  = ""     # Will be filled with Azure VPN Gateway public IP from TF-AZ-INFRA output
+enable_vpn_gateway    = true
+azure_vpn_gateway_ip  = "172.191.103.7"  # Azure VPN Gateway public IP
 azure_vnet_cidr       = "10.1.0.0/16"
 vpn_shared_key        = "GitDemoSecureKey2025!"  # Must match Azure configuration
 
