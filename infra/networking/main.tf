@@ -27,6 +27,11 @@ output "infraGitea_public_subnets" {
   value       = aws_subnet.infraGitea_public_subnets[*].id
 }
 
+output "infraGitea_private_subnets" {
+  description = "List of private subnet IDs"
+  value       = aws_subnet.infraGitea_private_subnets[*].id
+}
+
 output "public_subnet_cidr_block"{
   description = "List of public subnet CIDR blocks"
   value       = aws_subnet.infraGitea_public_subnets[*].cidr_block
