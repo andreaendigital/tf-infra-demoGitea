@@ -93,6 +93,15 @@ resource "aws_security_group" "rds_mysql_sg" {
     security_groups = [aws_security_group.ec2_sg_ssh_http.id]
   }
 
+  # Allow MySQL traffic from Azure VNet via VPN tunnel
+  ingress {
+    description = "Allow MySQL traffic from Azure VNet via VPN"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["10.1.0.0/16"] # Azure VNet CIDR
+  }
+
   # Restringe la salida de la DB a la VPC o solo a la EC2 (mejor, pero más complejo). 
   # Restringir a la VPC es un buen punto medio.
   egress {
