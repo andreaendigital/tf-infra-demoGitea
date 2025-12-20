@@ -74,7 +74,7 @@ module "alb" {
 module "rds_db_instance" {
   source               = "./rds"
   db_subnet_group_name = "infragitea-rds-subnet-group"
-  subnet_groups        = tolist(module.networking.infraGitea_public_subnets)
+  subnet_groups        = tolist(module.networking.infraGitea_private_subnets)
   rds_mysql_sg_id      = module.security_group.rds_mysql_sg_id
   mysql_db_identifier  = "mydb"
   mysql_username       = "dbuser"  
