@@ -91,7 +91,24 @@ pipeline {
         }
 
 
-
+        stage('Extract Terraform Outputs') {
+            when {
+                expression { return params.DEPLOY_ANSIBLE }
+            }
+            steps {
+                script {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-jenkins-gitea']]) {
+                        dir('infra') {
+                            env.RDS_ENDPOINT = sh(
+                                script: "terraform output -raw rds_endpoint_for_replication",
+                                returnStdout: true
+                            ).trim()
+                        }
+                    }
+                    echo "RDS Endpoint: ${env.RDS_ENDPOINT}"
+                }
+            }
+        }
         stage('Generate Ansible Inventory') {
             when {
                 expression { return params.DEPLOY_ANSIBLE }
@@ -109,8 +126,23 @@ pipeline {
                 expression { return params.DEPLOY_ANSIBLE }
             }
             steps {
-                sshagent(credentials: ['ansible-ssh-key']) {
-                sh "ansible-playbook -i ${INVENTORY_FILE} ${PLAYBOOK_FILE} --extra-vars 'ansible_ssh_common_args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"'"
+                withCredentials([
+                    string(credentialsId: 'rds-master-user', variable: 'RDS_MASTER_USER'),
+                    string(credentialsId: 'rds-master-password', variable: 'RDS_MASTER_PASSWORD'),
+                    string(credentialsId: 'aws-replication-user', variable: 'REPLICATION_USER'),
+                    string(credentialsId: 'aws-replication-password', variable: 'REPLICATION_PASSWORD')
+                ]) {
+                    sshagent(credentials: ['ansible-ssh-key']) {
+                        sh """
+                            ansible-playbook -i ${INVENTORY_FILE} ${PLAYBOOK_FILE} \
+                                --extra-vars 'ansible_ssh_common_args=\"-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"' \
+                                --extra-vars "rds_endpoint=${env.RDS_ENDPOINT}" \
+                                --extra-vars "rds_master_user=${RDS_MASTER_USER}" \
+                                --extra-vars "rds_master_password=${RDS_MASTER_PASSWORD}" \
+                                --extra-vars "replication_user=${REPLICATION_USER}" \
+                                --extra-vars "replication_password=${REPLICATION_PASSWORD}"
+                        """
+                    }
                 }
             }
         }
