@@ -28,10 +28,9 @@ pipeline {
                 echo 'Cleaning workspace and cloning repositories...'
                 deleteDir()
 
-               //1. Clone Repo (Terraform)
                 git branch: 'main', url: 'https://github.com/andreaendigital/tf-infra-demoGitea'
 
-                // 2. Clone Repo (Ansible)
+                dir("${ANSIBLE_DIR}") {
                 dir("${ANSIBLE_DIR}") {
                     checkout([$class: 'GitSCM', branches: [[name: 'main']], userRemoteConfigs: [[url: 'https://github.com/andreaendigital/ansible-demoGitea']]])
                 }
@@ -158,8 +157,7 @@ pipeline {
             // Discord Notification
             script {
                 sh '''
-                    # Discord Message with Markdown 
-                    MESSAGE=" Success: The pipeline **${JOB_NAME}** finish correctly #${BUILD_NUMBER}."
+                    MESSAGE="Success: Pipeline **${JOB_NAME}** completed successfully #${BUILD_NUMBER}."
                     
                     # Use cURL to send Webhook
                     curl -X POST ${DISCORD_WEBHOOK_URL} \
@@ -179,12 +177,11 @@ pipeline {
             // Discord Notification
             script {
                 sh '''
-                    # Discord Message with Markdown 
-                    MESSAGE="Deployment failed. Pipeline: **${JOB_NAME}** -  #${BUILD_NUMBER}."
+                    MESSAGE="Deployment failed. Pipeline: **${JOB_NAME}** - Build #${BUILD_NUMBER}."
                     
                     curl -X POST ${DISCORD_WEBHOOK_URL} \
                          -H 'Content-Type: application/json' \
-                         -d "{\\"username\\": \\"Jenkins Bot\\", \\"content\\": \\"${MESSAGE}\\", \\"embeds\\": [ { \\"description\\": \\"[Revisar el Fallo](${BUILD_URL})\\", \\"color\\": 16711680 } ]}"
+                         -d "{\\"username\\": \\"Jenkins Bot\\", \\"content\\": \\"${MESSAGE}\\", \\"embeds\\": [ { \\"description\\": \\"[Review Failure](${BUILD_URL})\\", \\"color\\": 16711680 } ]}"
                 '''
             }
 

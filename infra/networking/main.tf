@@ -143,5 +143,3 @@ resource "aws_route_table_association" "infraGitea_private_rt_association" {
   subnet_id      = aws_subnet.infraGitea_private_subnets[count.index].id
   route_table_id = aws_route_table.infraGitea_private_rt.id
 }
-
-#This module creates a VPC with public and private subnets, an internet gateway, and route tables. We use variables for flexibility, tags for traceability, and count-based logic for scalability.
