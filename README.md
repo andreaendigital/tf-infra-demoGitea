@@ -16,7 +16,7 @@ This project implements a modern DevOps architecture with:
 - **Automated Infrastructure Provisioning**: Complete AWS infrastructure setup with Terraform
 - **Scalable Architecture**: VPC with public/private subnets, Application Load Balancer, and RDS
 - **Secure Deployment**: Security groups, IAM roles, and encrypted storage
-- **Automated Application Deployment**: Ansible playbooks for Flask application setup
+- **Automated Application Deployment**: Ansible playbooks for Gitea application setup
 - **CI/CD Integration**: Jenkins pipeline with parameterized builds
 - **Service Management**: Systemd service configuration for production deployment
 - **Observability & Monitoring**: Integrated Splunk Observability Cloud for infrastructure and application monitoring
@@ -67,9 +67,10 @@ Configure these credentials in Jenkins:
 
 | Credential ID          | Type            | Description                           |
 | ---------------------- | --------------- | ------------------------------------- |
-| `aws-jenkins-carprice` | AWS Credentials | AWS access keys for Terraform/Ansible |
+| `aws-jenkins-gitea`    | AWS Credentials | AWS access keys for Terraform/Ansible |
 | `ansible-ssh-key`      | SSH Private Key | EC2 instance access key               |
-| `github-andrea-token`  | Secret Text     | GitHub access token                   |
+| `rds-master-user`      | Secret Text     | RDS MySQL master username             |
+| `rds-master-password`  | Secret Text     | RDS MySQL master password             |
 
 #### Required Plugins
 
@@ -99,10 +100,10 @@ Clone the required repositories:
 
 ```bash
 # Infrastructure repository
-git clone https://github.com/andreaendigital/tf-infra-demoCar
+git clone https://github.com/andreaendigital/tf-infra-demoGitea
 
 # Configuration management repository
-git clone https://github.com/andreaendigital/configManagement-carPrice
+git clone https://github.com/andreaendigital/ansible-demoGitea
 ```
 
 ## 🚀 Deployment
@@ -113,7 +114,7 @@ git clone https://github.com/andreaendigital/configManagement-carPrice
 | ------------------- | ------- | ----------------------------------------- |
 | `PLAN_TERRAFORM`    | `true`  | Run terraform plan to preview changes     |
 | `APPLY_TERRAFORM`   | `true`  | Apply infrastructure changes              |
-| `DEPLOY_ANSIBLE`    | `true`  | Deploy Flask application with Ansible     |
+| `DEPLOY_ANSIBLE`    | `true`  | Deploy Gitea application with Ansible     |
 | `DESTROY_TERRAFORM` | `false` | Destroy infrastructure (use with caution) |
 
 ### Pipeline Stages
@@ -123,7 +124,7 @@ git clone https://github.com/andreaendigital/configManagement-carPrice
 3. **Terraform Plan**: Preview infrastructure changes
 4. **Terraform Apply**: Provision AWS resources (with approval gate)
 5. **Generate Ansible Inventory**: Create dynamic inventory from Terraform output
-6. **Run Ansible Playbook**: Deploy and configure Flask application
+6. **Run Ansible Playbook**: Deploy and configure Gitea application
 7. **Deploy Monitoring**: Install Splunk OpenTelemetry Collector via Ansible
 8. **Reload Service**: Restart application service with updated configuration
 9. **Post-Deploy Verification**: Verify application and monitoring service status
@@ -237,7 +238,7 @@ terraform output splunk_config
 ## 📁 Project Structure
 
 ```
-tf-infra-demoCar/
+tf-infra-demoGitea/
 ├── infra/                      # Terraform infrastructure code
 │   ├── modules/               # Reusable Terraform modules
 │   ├── main.tf               # Main infrastructure configuration

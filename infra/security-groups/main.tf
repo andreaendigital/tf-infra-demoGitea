@@ -3,9 +3,10 @@ variable "ec2_sg_name" {}
 variable "vpc_id" {}
 variable "public_subnet_cidr_block" {}
 variable "ec2_sg_name_for_python_api" {}
-variable "vpc_cidr" {} # NUEVA VARIABLE: El CIDR de tu VPC (e.g., 10.0.0.0/16)
-variable "my_dev_ip" { # NUEVA VARIABLE: Para restringir SSH a tu IP (e.g., "203.0.113.4/32")
-  default = "0.0.0.0/0" # Usar un default inseguro si no se proporciona, pero se recomienda cambiar.
+variable "vpc_cidr" {}
+variable "my_dev_ip" {
+  description = "Developer IP for SSH access restriction (e.g., 203.0.113.4/32). Default allows all."
+  default     = "0.0.0.0/0"
 }
 
 # Outputs
@@ -31,17 +32,14 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
   description = "Enable the Port 22(SSH) & Port 80(http) and https(443)"
   vpc_id      = var.vpc_id
 
-  # ssh for terraform remote exec and Ansible
-  # Allow SSH from anywhere for Jenkins/Ansible access
   ingress {
-    description = "Allow remote SSH from anywhere"
+    description = "Allow remote SSH from anywhere for Terraform and Ansible"
     cidr_blocks = ["0.0.0.0/0"]
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-  }  # enable http
-  #  Si está detrás de un Load Balancer, se recomienda usar el SG del LB.
-  # Aquí mantenemos 0.0.0.0/0 asumiendo que es público, pero si es un backend, debe ser el SG del LB.
+  }
+
   ingress {
     description = "Allow HTTP request from anywhere (Public Access)"
     cidr_blocks = ["0.0.0.0/0"]
@@ -50,8 +48,6 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
     protocol    = "tcp"
   }
 
-  # enable https
-  # Igual que HTTP, se mantiene público si la aplicación es pública.
   ingress {
     description = "Allow HTTPS request from anywhere (Public Access)"
     cidr_blocks = ["0.0.0.0/0"]
@@ -60,8 +56,6 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
     protocol    = "tcp"
   }
 
-  #Outgoing request
-  # Se mantiene 0.0.0.0/0 para salida a Internet (necesario para repositorios, updates).
   egress {
     description = "Allow outgoing request to all destinations"
     from_port   = 0
@@ -82,28 +76,22 @@ resource "aws_security_group" "rds_mysql_sg" {
   description = "Allow access to RDS from EC2 present in public subnet"
   vpc_id      = var.vpc_id
 
-  # Regla de entrada RDS: Ya es segura porque usa var.public_subnet_cidr_block (o debería usar el SG de EC2)
-  # BUENA PRÁCTICA: Cambiar a usar el SG de la EC2 que consume la DB
   ingress {
     description = "Allow MySQL traffic only from EC2 SG"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    # CAMBIO 5: Reemplaza cidr_blocks por security_groups para mayor seguridad
     security_groups = [aws_security_group.ec2_sg_ssh_http.id]
   }
 
-  # Allow MySQL traffic from Azure VNet via VPN tunnel
   ingress {
     description = "Allow MySQL traffic from Azure VNet via VPN"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/16"] # Azure VNet CIDR
+    cidr_blocks = ["10.1.0.0/16"]
   }
 
-  # Restringe la salida de la DB a la VPC o solo a la EC2 (mejor, pero más complejo). 
-  # Restringir a la VPC es un buen punto medio.
   egress {
     description = "Allow all outbound traffic only within VPC"
     from_port   = 0
@@ -124,8 +112,6 @@ resource "aws_security_group" "ec2_sg_python_api" {
   description = "Enable ports for CarPrice app (3000, 5000, 5002, 5004)"
   vpc_id      = var.vpc_id
 
-  # ssh for terraform remote exec, Original port
-  # Restringe acceso a la API (Puerto 5000) solo desde la EC2 principal.
   ingress {
     description = "Allow traffic on port 5000 only from EC2 SG"
     security_groups = [aws_security_group.ec2_sg_ssh_http.id] 
@@ -134,8 +120,6 @@ resource "aws_security_group" "ec2_sg_python_api" {
     protocol    = "tcp"
   }
 
-  # Web Application
-  # Restringe acceso a la Web App (Puerto 3000) solo desde la EC2 principal.
   ingress {
     description = "Allow traffic on port 3000 (Web App) only from EC2 SG"
     security_groups = [aws_security_group.ec2_sg_ssh_http.id]
@@ -144,8 +128,6 @@ resource "aws_security_group" "ec2_sg_python_api" {
     protocol    = "tcp"
   }
 
-  # Backend API
-  # Restringe acceso a Backend API (Puerto 5002) solo desde la EC2 principal.
   ingress {
     description = "Allow traffic on port 5002 (Backend API) only from EC2 SG"
     security_groups = [aws_security_group.ec2_sg_ssh_http.id]
@@ -154,8 +136,6 @@ resource "aws_security_group" "ec2_sg_python_api" {
     protocol    = "tcp"
   }
 
-  # Documentation
-  # Restringe acceso a Documentación (Puerto 5004) solo desde la EC2 principal.
   ingress {
     description = "Allow traffic on port 5004 (Documentation) only from EC2 SG"
     security_groups = [aws_security_group.ec2_sg_ssh_http.id]
@@ -164,7 +144,6 @@ resource "aws_security_group" "ec2_sg_python_api" {
     protocol    = "tcp"
   }
 
-  # Restringe la salida de la API a la VPC (opcional, igual que RDS).
   egress {
     description = "Allow all outbound traffic only within VPC"
     from_port   = 0

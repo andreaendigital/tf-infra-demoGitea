@@ -1,3 +1,11 @@
+# Gitea Infrastructure - Main Configuration
+# 
+# SECURITY NOTE: Database credentials in this file are default values for Terraform state only.
+# Actual production credentials are securely managed via Jenkins Credentials Manager
+# and passed to Ansible during deployment. These hardcoded values are overridden at runtime.
+#
+# Credentials flow: Jenkins Credentials -> Ansible extra-vars -> RDS Configuration
+
 # Networking module: creates VPC, public and private subnets in us-east-1
 module "networking" {
   source               = "./networking"
@@ -33,7 +41,6 @@ module "ec2" {
   sg_enable_ssh_https           = module.security_group.sg_ec2_sg_ssh_http_id
   ec2_sg_name_for_python_api    = module.security_group.sg_ec2_for_python_api
   enable_public_ip_address      = true
-  # user_data_install_apache      = templatefile("./template/ec2_install_apache.sh", {})  #se omite, ya que se instala por ansible las dependencias del ec2
 
 }
 
@@ -65,9 +72,6 @@ module "alb" {
   lb_listner_port           = 80
   lb_listner_protocol       = "HTTP"
   lb_listner_default_action = "forward"
-  #lb_https_listner_port     = 443
-  #lb_https_listner_protocol = "HTTPS"
-  #demoCar_1_acm_arn        = module.aws_ceritification_manager.demoCar_1_acm_arn
   lb_target_group_attachment_port = 5000
 }
 
@@ -77,9 +81,9 @@ module "rds_db_instance" {
   subnet_groups        = tolist(module.networking.infraGitea_private_subnets)
   rds_mysql_sg_id      = module.security_group.rds_mysql_sg_id
   mysql_db_identifier  = "mydb"
-  mysql_username       = "dbuser"  
-  mysql_password       = "dbpassword" # Change, use secret manager
-  mysql_dbname         = "infraGiteaDB" # Change, use secret manager
+  mysql_username       = "dbuser"
+  mysql_password       = "dbpassword"
+  mysql_dbname         = "infraGiteaDB"
   enable_binlog        = var.enable_binlog
 }
 
@@ -94,24 +98,22 @@ module "vpn_gateway" {
 }
 
 
-/* #In case to use domain name:
-# Route53 hosted zone module
+# Route53 and SSL Certificate Manager (commented out)
+# Uncomment to enable custom domain and HTTPS support
+/*
 module "hosted_zone" {
   source          = "./hosted-zone"
-  domain_name     = " "
+  domain_name     = "your-domain.com"
   aws_lb_dns_name = module.alb.aws_lb_dns_name
   aws_lb_zone_id  = module.alb.aws_lb_zone_id
 }
 
 module "aws_ceritification_manager" {
   source         = "./certificate-manager"
-  domain_name    = " "
+  domain_name    = "your-domain.com"
   hosted_zone_id = module.hosted_zone.hosted_zone_id
 }
 */
-
-# HTTPS listener variables are commented out because demoCar_1 does not use Route 53 or SSL certificates.
-# To enable HTTPS in the future, uncomment these lines and define the corresponding variables in the module.
 output "infraGitea_rds_endpoint" {
   description = "RDS MySQL endpoint for infraGitea database"
   value       = module.rds_db_instance.infraGitea_rds_endpoint
@@ -122,14 +124,17 @@ output "infraGitea_rds_address" {
   value       = module.rds_db_instance.infraGitea_rds_address
 }
 
+# Note: These credentials are default values for Terraform outputs only.
+# Actual credentials are managed securely via Jenkins Credentials Manager
+# and passed to Ansible at deployment time.
 output "infraGitea_mysql_username" {
-  description = "MySQL username for infraGitea"
+  description = "MySQL username for infraGitea (default value, overridden by Jenkins)"
   value       = "dbuser"
   sensitive   = true
 }
 
 output "infraGitea_mysql_password" {
-  description = "MySQL password for infraGitea"
+  description = "MySQL password for infraGitea (default value, overridden by Jenkins)"
   value       = "dbpassword"
   sensitive   = true
 }
